@@ -80,7 +80,8 @@ rule trim_decon:
         r2 = 'output/merged/{sample_name}_R2.fastq.gz',
     output:
         r1 = 'output/bbduk/{sample_name}_R1.fastq.gz',
-        r2 = 'output/bbduk/{sample_name}_R2.fastq.gz'
+        r2 = 'output/bbduk/{sample_name}_R2.fastq.gz',
+        stats = 'output/bbduk/{sample_name}_stats.txt'
     shell:
         'bin/bbmap/bbduk.sh '
         'threads=9 '
@@ -97,5 +98,5 @@ rule trim_decon:
         'out={output.r1} '
         'out2={output.r2} '
         'ref=bin/bbmap/resources/sequencing_artifacts.fa.gz '
-        'k=31 hdist=1 stats=output/bbduk/{sample_name}_stats.txt'
+        'k=31 hdist=1 stats={output.stats}'
 
