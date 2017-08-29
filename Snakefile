@@ -77,10 +77,18 @@ rule trim_decon:
         r1 = touch('output/bbduk/{sample_name}_R1.fastq.gz'),
         r2 = touch('output/bbduk/{sample_name}_R2.fastq.gz')
     shell:
-        'echo '
-        'bbduk '
+        'echo "'
+        'bin/bbmap/bbduk.sh '
         'in={input.r1} '
         'in2={input.r2} '
+        'out=stdout.fastq '
+        'ktrim=r k=23 mink=11 hdist=1 tpe tbo '
+        'ref=bin/bbmap/resources/adapters.fa ' 
+        '| bin/bbmap/bbduk.sh '
+        'in=stdin.fastq '
         'out={output.r1} '
         'out2={output.r2} '
-        '"FIXME PARAMS"'
+        'ref=bin/bbmap/resources/sequencing_artifacts.fa.gz '
+        'k=31 hdist=1 stats=stats.txt'
+
+
