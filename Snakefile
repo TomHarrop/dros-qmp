@@ -89,6 +89,5 @@ rule trim_decon:
         'out={output.r1} '
         'out2={output.r2} '
         'ref=bin/bbmap/resources/sequencing_artifacts.fa.gz '
-        'k=31 hdist=1 stats=stats.txt'
-
+        'k=31 hdist=1 stats=stats.txt "'
 
