@@ -55,21 +55,24 @@ with open(sample_key) as csvfile:
 #########
 
 rule all:
-    input: 
+    input:
         expand('output/bbduk/{sample_name}_{read}.fastq.gz',
                sample_name=all_samples, read=['R1', 'R2'])
 
 rule merge_per_sample:
+    threads:
+        1
     input:
         merge_wildcard_resolver
     output:
         touch('output/merged/{sample_name}_{read}.fastq.gz')
     shell:
-        'echo "'
         'cat {input} '
-        '> {output}"'
+        '> {output}'
 
 rule trim_decon:
+    threads:
+        18
     input:
         r1 = 'output/merged/{sample_name}_R1.fastq.gz',
         r2 = 'output/merged/{sample_name}_R2.fastq.gz',
@@ -77,17 +80,20 @@ rule trim_decon:
         r1 = touch('output/bbduk/{sample_name}_R1.fastq.gz'),
         r2 = touch('output/bbduk/{sample_name}_R2.fastq.gz')
     shell:
-        'echo "'
         'bin/bbmap/bbduk.sh '
+        'threads=9 '
+        '-Xmx100g '
         'in={input.r1} '
         'in2={input.r2} '
         'out=stdout.fastq '
         'ktrim=r k=23 mink=11 hdist=1 tpe tbo '
         'ref=bin/bbmap/resources/adapters.fa ' 
         '| bin/bbmap/bbduk.sh '
+        'threads=9 '
+        '-Xmx100g '
         'in=stdin.fastq '
         'out={output.r1} '
         'out2={output.r2} '
         'ref=bin/bbmap/resources/sequencing_artifacts.fa.gz '
-        'k=31 hdist=1 stats=stats.txt "'
+        'k=31 hdist=1 stats=output/bbduk/stats.txt'
 
