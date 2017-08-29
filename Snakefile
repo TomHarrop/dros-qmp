@@ -54,6 +54,8 @@ with open(sample_key) as csvfile:
 # RULES #
 #########
 
+# TODO: write logs and stats to a proper log directory
+
 rule all:
     input:
         expand('output/bbduk/{sample_name}_{read}.fastq.gz',
@@ -65,7 +67,7 @@ rule merge_per_sample:
     input:
         merge_wildcard_resolver
     output:
-        touch('output/merged/{sample_name}_{read}.fastq.gz')
+        'output/merged/{sample_name}_{read}.fastq.gz'
     shell:
         'cat {input} '
         '> {output}'
@@ -77,8 +79,8 @@ rule trim_decon:
         r1 = 'output/merged/{sample_name}_R1.fastq.gz',
         r2 = 'output/merged/{sample_name}_R2.fastq.gz',
     output:
-        r1 = touch('output/bbduk/{sample_name}_R1.fastq.gz'),
-        r2 = touch('output/bbduk/{sample_name}_R2.fastq.gz')
+        r1 = 'output/bbduk/{sample_name}_R1.fastq.gz',
+        r2 = 'output/bbduk/{sample_name}_R2.fastq.gz'
     shell:
         'bin/bbmap/bbduk.sh '
         'threads=9 '
@@ -95,5 +97,5 @@ rule trim_decon:
         'out={output.r1} '
         'out2={output.r2} '
         'ref=bin/bbmap/resources/sequencing_artifacts.fa.gz '
-        'k=31 hdist=1 stats=output/bbduk/stats.txt'
+        'k=31 hdist=1 stats=output/bbduk/{sample_name}_stats.txt'
 
