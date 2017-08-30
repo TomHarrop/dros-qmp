@@ -86,6 +86,7 @@ rule trim_decon:
         r2 = 'output/bbduk/{sample_name}_R2.fastq.gz'
     log:
         trim_log = 'output/bbduk/{sample_name}_trim.log',
+        trim_stats = 'output/bbduk/{sample_name}_trim-stats.txt',
         filter_log = 'output/bbduk/{sample_name}_filter.log',
         filter_stats = 'output/bbduk/{sample_name}_filter-stats.txt'
     shell:
@@ -97,6 +98,8 @@ rule trim_decon:
         'out=stdout.fastq '
         'ktrim=r k=23 mink=11 hdist=1 tpe tbo '
         'ref={input.adaptors} '
+        'stats={log.trim_stats} '
+        'statscolumns=5 '
         '2> {log.trim_log} ' 
         '| bin/bbmap/bbduk.sh '
         'threads={threads} '
