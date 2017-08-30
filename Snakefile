@@ -31,6 +31,8 @@ all_samples = ['4872EtOH-1', '4872QMP-2', '48EtOH-2', '4872EtOH-2',
                '48EtOH-1', '12EtOH-1', '4872stay-2', '4872stay-1',
                '48QMP-2', '12QMP-2', '24QMP-2', '24EtOH-2', '12QMP-1',
                '24EtOH-1']
+bbduk_adaptors = 'bin/bbmap/resources/adapters.fa'
+bbduk_contaminants = 'bin/bbmap/resources/sequencing_artifacts.fa.gz'
 
 
 # find fastq files
@@ -54,12 +56,11 @@ with open(sample_key) as csvfile:
 # RULES #
 #########
 
-# TODO: write logs and stats to a proper log directory
-
 rule all:
     input:
         expand('output/bbduk/{sample_name}_{read}.fastq.gz',
-               sample_name=all_samples, read=['R1', 'R2'])
+               sample_name=all_samples,
+               read=['R1', 'R2'])
 
 rule merge_per_sample:
     threads:
@@ -78,10 +79,15 @@ rule trim_decon:
     input:
         r1 = 'output/merged/{sample_name}_R1.fastq.gz',
         r2 = 'output/merged/{sample_name}_R2.fastq.gz',
+        adaptors = bbduk_adaptors,
+        contaminants = bbduk_contaminants
     output:
         r1 = 'output/bbduk/{sample_name}_R1.fastq.gz',
-        r2 = 'output/bbduk/{sample_name}_R2.fastq.gz',
-        stats = 'output/bbduk/{sample_name}_stats.txt'
+        r2 = 'output/bbduk/{sample_name}_R2.fastq.gz'
+    log:
+        trim_log = 'output/bbduk/{sample_name}_trim.log',
+        filter_log = 'output/bbduk/{sample_name}_filter.log',
+        filter_stats = 'output/bbduk/{sample_name}_filter-stats.txt'
     shell:
         'bin/bbmap/bbduk.sh '
         'threads={threads} '
@@ -90,12 +96,14 @@ rule trim_decon:
         'in2={input.r2} '
         'out=stdout.fastq '
         'ktrim=r k=23 mink=11 hdist=1 tpe tbo '
-        'ref=bin/bbmap/resources/adapters.fa ' 
+        'ref={input.adaptors} '
+        '2> {log.trim_log} ' 
         '| bin/bbmap/bbduk.sh '
         'threads={threads} '
         '-Xmx100g '
         'in=stdin.fastq '
         'out={output.r1} '
         'out2={output.r2} '
-        'ref=bin/bbmap/resources/sequencing_artifacts.fa.gz '
-        'k=31 hdist=1 stats={output.stats}'
+        'ref={input.contaminants} '
+        'k=31 hdist=1 stats={log.filter_stats} '
+        '2> {log.filter_log}'
