@@ -84,7 +84,7 @@ rule trim_decon:
         stats = 'output/bbduk/{sample_name}_stats.txt'
     shell:
         'bin/bbmap/bbduk.sh '
-        'threads=9 '
+        'threads={threads} '
         '-Xmx100g '
         'in={input.r1} '
         'in2={input.r2} '
@@ -92,11 +92,10 @@ rule trim_decon:
         'ktrim=r k=23 mink=11 hdist=1 tpe tbo '
         'ref=bin/bbmap/resources/adapters.fa ' 
         '| bin/bbmap/bbduk.sh '
-        'threads=9 '
+        'threads={threads} '
         '-Xmx100g '
         'in=stdin.fastq '
         'out={output.r1} '
         'out2={output.r2} '
         'ref=bin/bbmap/resources/sequencing_artifacts.fa.gz '
         'k=31 hdist=1 stats={output.stats}'
-
