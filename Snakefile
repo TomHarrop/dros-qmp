@@ -3,6 +3,7 @@
 import csv
 import os
 
+
 #############
 # FUNCTIONS #
 #############
@@ -26,11 +27,11 @@ def merge_wildcard_resolver(wildcards):
 
 read_dir = 'data/reads'
 sample_key = 'data/NZGL01923A_C9KB3ANXX_sequencing_summary.txt'
-all_samples = ['4872EtOH-1', '4872QMP-2', '48EtOH-2', '4872EtOH-2',
-               '4872QMP-1', '12EtOH-2', '48QMP-1', '24QMP-1',
-               '48EtOH-1', '12EtOH-1', '4872stay-2', '4872stay-1',
-               '48QMP-2', '12QMP-2', '24QMP-2', '24EtOH-2', '12QMP-1',
-               '24EtOH-1']
+all_samples = ['12EtOH-1', '12EtOH-2', '12QMP-1', '12QMP-2',
+               '24EtOH-1', '24EtOH-2', '24QMP-1', '24QMP-2',
+               '4872EtOH-1', '4872EtOH-2', '4872QMP-1', '4872QMP-2',
+               '4872stay-1', '4872stay-2',
+               '48EtOH-1', '48EtOH-2', '48QMP-1', '48QMP-2']
 bbduk_adaptors = 'bin/bbmap/resources/adapters.fa'
 bbduk_contaminants = 'bin/bbmap/resources/sequencing_artifacts.fa.gz'
 
@@ -100,7 +101,7 @@ rule trim_decon:
         'ref={input.adaptors} '
         'stats={log.trim_stats} '
         'statscolumns=5 '
-        '2> {log.trim_log} ' 
+        '2> {log.trim_log} '
         '| bin/bbmap/bbduk.sh '
         'threads={threads} '
         '-Xmx100g '
