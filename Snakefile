@@ -63,6 +63,22 @@ rule all:
                sample_name=all_samples,
                read=['R1', 'R2'])
 
+rule index_transcriptome:
+    input:
+        transcriptome = 'data/transcriptome/dmel-all-transcript-r6.17.fasta'
+    output:
+        'output/salmon/transcripts_index'
+    threads:
+        50
+    log:
+        'output/salmon/index.log'
+    shell:
+        'bin/salmon/salmon index '
+        '--transcripts {input.transcriptome} '
+        '--index {output} '
+        '--threads {threads} '
+        '&> {log}'
+
 rule merge_per_sample:
     threads:
         1
@@ -112,18 +128,22 @@ rule trim_decon:
         'k=31 hdist=1 stats={log.filter_stats} '
         '2> {log.filter_log}'
 
-rule index_transcriptome:
+rule salmon_quant:
     input:
-        transcriptome = 'data/transcriptome/dmel-all-transcript-r6.17.fasta'
+        r1 = 'output/bbduk/{sample_name}_R1.fastq.gz',
+        r2 = 'output/bbduk/{sample_name}_R2.fastq.gz',
+        index = 'output/salmon/transcripts_index'
     output:
-        'output/salmon/transcripts_index'
-    threads:
-        18
+        'output/salmon/{sample_name}'
     log:
-        'output/salmon/index.log'
+        'output/salmon/{sample_name}/{sample_name}.log'
+    threads:
+        50
     shell:
-        'bin/salmon/salmon index '
-        '--transcripts {input.transcriptome} '
-        '--index {output} '
-        '--threads {threads} '
-        '&> {log}'        
+        'bin/salmon/salmon quant '
+        '-l ISR '
+        '-i {input.index} '
+        '-1 {input.r1} '
+        '-2 {input.r2} '
+        '-o {output} '
+        '&> {log}'
