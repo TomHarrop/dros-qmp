@@ -140,8 +140,9 @@ rule salmon_quant:
         50
     shell:
         'bin/salmon/salmon quant '
+        '-p {threads} '
         '-l ISR '
-        '-i {input.index} '
+        '-i {input.iqndex} '
         '-1 {input.r1} '
         '-2 {input.r2} '
         '-o {output} '
