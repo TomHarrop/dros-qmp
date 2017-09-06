@@ -122,9 +122,8 @@ rule index_transcriptome:
     log:
         'output/salmon/index.log'
     shell:
-        'bin/salmon/salmon '
+        'bin/salmon/salmon index '
         '--transcripts {input.transcriptome} '
         '--index {output} '
         '--threads {threads} '
-        '&> {log}'
-        
+        '&> {log}'        
