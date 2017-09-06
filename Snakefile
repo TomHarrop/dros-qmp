@@ -59,9 +59,8 @@ with open(sample_key) as csvfile:
 
 rule all:
     input:
-        expand('output/bbduk/{sample_name}_{read}.fastq.gz',
-               sample_name=all_samples,
-               read=['R1', 'R2'])
+        expand('output/salmon/{sample_name}',
+               sample_name=all_samples)
 
 rule index_transcriptome:
     input:
