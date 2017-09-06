@@ -127,3 +127,4 @@ rule index_transcriptome:
         '--index {output} '
         '--threads {threads} '
         '&> {log}'
+        
