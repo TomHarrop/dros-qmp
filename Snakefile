@@ -142,7 +142,7 @@ rule salmon_quant:
         'bin/salmon/salmon quant '
         '-p {threads} '
         '-l ISR '
-        '-i {input.iqndex} '
+        '-i {input.index} '
         '-1 {input.r1} '
         '-2 {input.r2} '
         '-o {output} '
