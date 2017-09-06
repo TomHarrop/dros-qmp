@@ -110,3 +110,19 @@ rule trim_decon:
         'ref={input.contaminants} '
         'k=31 hdist=1 stats={log.filter_stats} '
         '2> {log.filter_log}'
+
+rule index_transcriptome:
+    input:
+        transcriptome = 'data/transcriptome/dmel-all-transcript-r6.17.fasta'
+    output:
+        'output/salmon/transcripts_index'
+    threads:
+        18
+    log:
+        'output/salmon/index.log'
+    shell:
+        'bin/salmon/salmon '
+        '--transcripts {input.transcriptome} '
+        '--index {output} '
+        '--threads {threads} '
+        '&> {log}'
