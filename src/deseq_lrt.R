@@ -9,14 +9,9 @@ dds <- readRDS("output/deseq2/dds.Rds")
 cd_lrt <- colData(dds)[colData(dds)$timepoint %in% c("12hr", "24hr", "48hr"),]
 counts_lrt <- counts(dds)[,rownames(cd_lrt)]
 
-# filter read counts
-filtered_counts <- subset(counts_lrt,
-                          rowMeans(counts_lrt) > 10 |
-                              rowMax(counts_lrt) > 10)
-
 # regenerate object
 dds_lrt <- DESeqDataSetFromMatrix(
-    countData = filtered_counts,
+    countData = counts_lrt,
     colData = cd_lrt, 
     design = ~ timepoint + treatment + timepoint:treatment)
 

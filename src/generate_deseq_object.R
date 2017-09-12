@@ -41,5 +41,14 @@ dds <- DESeqDataSetFromTximport(
     design = ~ 1
 )
 
+# filter read counts
+deseq_counts <- counts(dds)
+filtered_counts <- deseq_counts[rowMeans(deseq_counts) > 10, ]
+dds_filtered <- DESeqDataSetFromMatrix(countData = filtered_counts,
+                                       colData = colData(dds),
+                                       design = ~ 1
+)
+
+
 # save DESEQ object
-saveRDS(dds, "output/deseq2/dds.Rds")
+saveRDS(dds_filtered, "output/deseq2/dds.Rds")
