@@ -33,6 +33,9 @@ col_data[, timepoint := paste0(gsub("^([[:digit:]]+).*", "\\1", samplename),
                                "hr")]
 col_data[, treatment := gsub("^[[:digit:]]+([[:alpha:]]+).*", "\\1",
                              samplename)]
+col_data[timepoint == "4872hr", timepoint := "120hr"]
+col_data[timepoint == "120hr" & treatment == "QMP", treatment := "removed"]
+col_data[timepoint == "120hr" & treatment == "stay", treatment := "QMP"]
 
 # generate DESeq object
 dds <- DESeqDataSetFromTximport(
@@ -43,12 +46,12 @@ dds <- DESeqDataSetFromTximport(
 
 # filter read counts
 deseq_counts <- counts(dds)
-filtered_counts <- deseq_counts[rowMeans(deseq_counts) > 10, ]
+filtered_counts <- deseq_counts[rowMeans(deseq_counts) > 5 |
+                                    rowMax(deseq_counts) > 10, ]
 dds_filtered <- DESeqDataSetFromMatrix(countData = filtered_counts,
                                        colData = colData(dds),
                                        design = ~ 1
 )
-
 
 # save DESEQ object
 saveRDS(dds_filtered, "output/deseq2/dds.Rds")
